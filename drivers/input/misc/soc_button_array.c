@@ -19,6 +19,7 @@
 #include <linux/gpio_keys.h>
 #include <linux/gpio.h>
 #include <linux/platform_device.h>
+#include <linux/dmi.h>
 
 struct soc_button_info {
 	const char *name;
@@ -306,6 +307,19 @@ static int soc_button_remove(struct platform_device *pdev)
 	return 0;
 }
 
+/*
+ * Some devices annonce a 5 button array devices while only having a power button.
+ */
+static const struct dmi_system_id soc_button_blacklist[] = {
+	{
+		/* Meegopad T02 */
+		.matches = {
+			DMI_MATCH(DMI_PRODUCT_NAME, "MEEGOPAD T02"),
+		},
+	},
+	{}
+};
+
 static int soc_button_probe(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
@@ -315,6 +329,9 @@ static int soc_button_probe(struct platform_device *pdev)
 	struct platform_device *pd;
 	int i;
 	int error;
+
+	if (dmi_check_system(soc_button_blacklist))
+		return -ENODEV;
 
 	id = acpi_match_device(dev->driver->acpi_match_table, dev);
 	if (!id)
