@@ -4646,6 +4646,7 @@ static void rtl8xxxu_free_tx_resources(struct rtl8xxxu_priv *priv)
 		list_del(&tx_urb->list);
 		priv->tx_urb_free_count--;
 		usb_free_urb(&tx_urb->urb);
+		kfree(tx_urb);
 	}
 	spin_unlock_irqrestore(&priv->tx_urb_lock, flags);
 }
