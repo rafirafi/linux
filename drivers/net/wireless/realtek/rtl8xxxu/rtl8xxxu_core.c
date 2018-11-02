@@ -1035,8 +1035,6 @@ void rtl8xxxu_gen1_enable_rf(struct rtl8xxxu_priv *priv)
 	rtl8xxxu_write_rfreg(priv, RF_A, RF6052_REG_AC, 0x32d95);
 	if (priv->rf_paths == 2)
 		rtl8xxxu_write_rfreg(priv, RF_B, RF6052_REG_AC, 0x32d95);
-
-	rtl8xxxu_write8(priv, REG_TXPAUSE, 0x00);
 }
 
 void rtl8xxxu_gen1_disable_rf(struct rtl8xxxu_priv *priv)
@@ -5834,6 +5832,8 @@ static int rtl8xxxu_start(struct ieee80211_hw *hw)
 		ret = rtl8xxxu_submit_rx_urb(priv, rx_urb);
 	}
 exit:
+	rtl8xxxu_write8(priv, REG_TXPAUSE, 0x00);
+
 	/*
 	 * Accept all data and mgmt frames
 	 */
