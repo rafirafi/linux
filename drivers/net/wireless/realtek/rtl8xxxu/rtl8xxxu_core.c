@@ -5080,6 +5080,7 @@ static void rtl8xxxu_free_rx_resources(struct rtl8xxxu_priv *priv)
 		list_del(&rx_urb->list);
 		priv->rx_urb_pending_count--;
 		usb_free_urb(&rx_urb->urb);
+		kfree(rx_urb);
 	}
 
 	spin_unlock_irqrestore(&priv->rx_urb_lock, flags);
@@ -5102,6 +5103,7 @@ static void rtl8xxxu_queue_rx_urb(struct rtl8xxxu_priv *priv,
 		skb = (struct sk_buff *)rx_urb->urb.context;
 		dev_kfree_skb(skb);
 		usb_free_urb(&rx_urb->urb);
+		kfree(rx_urb);
 	}
 
 	spin_unlock_irqrestore(&priv->rx_urb_lock, flags);
@@ -5149,6 +5151,7 @@ static void rtl8xxxu_rx_urb_work(struct work_struct *work)
 			skb = (struct sk_buff *)rx_urb->urb.context;
 			dev_kfree_skb(skb);
 			usb_free_urb(&rx_urb->urb);
+			kfree(rx_urb);
 		}
 	}
 }
@@ -5378,6 +5381,7 @@ static void rtl8xxxu_rx_complete(struct urb *urb)
 cleanup:
 	usb_free_urb(urb);
 	dev_kfree_skb(skb);
+	kfree(rx_urb);
 	return;
 }
 
