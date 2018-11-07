@@ -109,7 +109,7 @@ static void update_recvframe_phyinfo(union recv_frame *precvframe,
 	rx_bssid = get_hdr_bssid(wlanhdr);
 	pkt_info.bssid_match = ((!IsFrameTypeCtrl(wlanhdr)) &&
 				!pattrib->icv_err && !pattrib->crc_err &&
-				!ether_addr_equal(rx_bssid, my_bssid));
+				ether_addr_equal(rx_bssid, my_bssid));
 
 	rx_ra = get_ra(wlanhdr);
 	my_hwaddr = myid(&padapter->eeprompriv);
